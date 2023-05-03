@@ -1,38 +1,40 @@
 package com.bridgelabz;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
+import java.sql.*;
 import java.util.Enumeration;
 
 public class DataBaseClass {
-    static String jdbcURL = "jdbc:mysql://localhost:3306/?user=root";
+    static String url = "jdbc:mysql://localhost:3306/EmployeePayroll";
     static String userName="root";
     static String password="Mohan@1969";
-    static Connection connection;
-
-    public static void main(String[] args) {
+    public static void fetchData(String quaryFetch) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            System.out.println("Driver loaded!");
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot find the driver in the classpath!", e);
+            System.out.print("The error in the class -" + e);
         }
-        listDrivers();
         try {
-            System.out.println("Connecting to database:" + jdbcURL);
-            connection = DriverManager.getConnection(jdbcURL, userName, password);
-            System.out.println("Connection is successful!!!!!!" + connection);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Connection connection =DriverManager.getConnection(url,userName,password);
+            Statement st = connection.createStatement();
+            System.out.println("The fecting the data is started  \n");
+            ResultSet rs =st.executeQuery(quaryFetch);
+            //The result we want in the table formatte so we use RS
+            //fetch the data
+            System.out.println("The result set - " + rs);
+            while (rs.next()) {
+                String userData = rs.getInt(1)+" "+rs.getNString(2) + "  " + rs.getDate(3)+" "+ rs.getDouble(4 ) + " "+ rs.getString(5);
+                System.out.println(userData);
+            }
+            System.out.println("Closing point of the Fetch method");
+            st.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println("The error at the Connection - " + e);
         }
     }
-    private static void listDrivers () {
-        Enumeration<Driver> driverList = DriverManager.getDrivers();
-        while (driverList.hasMoreElements()) {
-            Driver driverClass = (Driver) driverList.nextElement();
-            System.out.println("  " + driverClass.getClass().getName());
-        }
+
+    public static void main(String[] args) {
+        fetchData("select * from EmployeePayroll");
     }
 }
 
