@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.Enumeration;
 
 public class DataBaseClass {
-    static String url = "jdbc:mysql://localhost:3306/EmployeePayroll";
+    static String url = "jdbc:mysql://localhost:3306/payroll_Employewage";
     static String userName="root";
     static String password="Mohan@1969";
     public static void fetchData(String quaryFetch) {
@@ -32,10 +32,31 @@ public class DataBaseClass {
             System.out.println("The error at the Connection - " + e);
         }
     }
+    public static void set(){
+        try {
+            Connection connection =DriverManager.getConnection(url,userName,password);
+            // Statement st = connection.createStatement();
 
+            String quary ="update payroll_Employewage set salary = ? where id = ? ";
+            // " insert into employee_payroll(name,salary,start) values(?,?,?)";
+            System.out.println("--------The quary point for the updation ------ \n");
+            PreparedStatement st = connection.prepareStatement(quary);
+            st.setDouble(1,3600000);
+            st.setInt(2,4);
+
+            int count = st.executeUpdate();
+            System.out.println("The no row affected + "+ count);
+            st.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            System.out.println("error - "+ e);
+        }
+
+    }
     public static void main(String[] args) {
-        fetchData("select * from EmployeePayroll");
+        fetchData("SELECT * FROM payroll_Employewage WHERE startDate BETWEEN CAST('2021-01-01'AS DATE) AND DATE(NOW())");
+//        set();
+//        fetchData("select * from payroll_Employewage");
     }
 }
-
-//jdbc:mysql://localhost:3306/?user=root
